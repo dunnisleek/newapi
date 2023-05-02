@@ -1,17 +1,20 @@
 <template>
-  <section>
+  <section v-if="hideComponent">
     <!-- <div><menuBar /></div> -->
     <!-- start of userlists -->
+
     <div class="backbtn">
-      <button class="redBtn" @click="goBack">Back</button>
+      <button class="redBtn" @click="hide">
+        <router-link to="/">Back</router-link>
+      </button>
     </div>
     <div class="wrapper">
       <!-- <div class="tab"> -->
       <div class="tab">
         <h3
           class="bluebg"
-          :class="{ active: !isActive }"
-          @click="display(0), (isActive = !isActive)"
+          :class="currentStep === 0 ? 'blue' : 'transparent'"
+          @click="display(0)"
         >
           <span class="circlee"></span>
           Ventures ({{ ventureCount }})
@@ -21,6 +24,7 @@
         <div class="userlist" v-if="currentStep === 0">
           <table>
             <tbody>
+              <!-- <h3>step1</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
                 <td>{{ userList.name.official }}</td>
                 <td>{{ userList.name.common }}</td>
@@ -32,6 +36,7 @@
         <div class="userlistdigital" v-else-if="currentStep === 1">
           <table>
             <tbody>
+              <!-- <h3>step2</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
                 <td>{{ userList.name.official }}</td>
                 <td>{{ userList.name.common }}</td>
@@ -42,6 +47,7 @@
         <div class="userlistcommunity" v-else-if="currentStep === 2">
           <table>
             <tbody>
+              <!-- <h3>step3</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
                 <td>{{ userList.name.official }}</td>
                 <td>{{ userList.name.common }}</td>
@@ -49,15 +55,19 @@
             </tbody>
           </table>
         </div>
-
+ 
         <h3
-          :class="{ active: isActive }"
-          @click="display(1), isActive == !isActive"
+        :class="currentStep === 1 ? 'blue' : 'transparent' "
+          @click="display(1)"
+    
         >
           <span class="pinkcircle"></span>Digital ({{ digitalCount }})
         </h3>
 
-        <h3 @click="display(2)">
+        <h3
+          :class="currentStep === 2 ? 'blue' : 'transparent'"
+          @click="display(2)"
+        >
           <span class="purplecircle"></span>Community ({{ communityCount }})
         </h3>
       </div>
@@ -72,26 +82,29 @@
           <p>{{ currentDate }} ({{ currentTime }})</p>
         </div>
         <!-- details -->
-        <h2 class="title">Name <br /><span>Favour</span></h2>
-        <h2 class="title">
+
+        <p class="title">Name <br /><span>Favour</span></p>
+        <p class="title">
           Email <br />
           <span style="text-decoration: underline"> favour@acumen.digital</span>
-        </h2>
-        <h2 class="title">
+        </p>
+        <p class="title">
           Message<br />
           <span class="para">
             Hello my dear,How are you? Abeg I want to to do mobile app
             Thanks.</span
           >
-        </h2>
+        </p>
       </div>
     </div>
   </section>
 </template>
 
 <script>
+
 // import menuBar from "@/NavigationSection/menuBar.vue";
 import moment from "moment-timezone";
+
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -106,6 +119,14 @@ export default {
       type: Array,
       required: true,
     },
+    isVisible: {
+      type: Boolean,
+      default: false,
+    },
+    initialStep:{
+      type:Number,
+      default:0
+    }
   },
 
   data() {
@@ -114,34 +135,45 @@ export default {
       digitalCount: 95,
       communityCount: 107,
       currentStep: 0,
-      isActive: false,
-      currentTime: "",
-      // toggle: false,
+      hideComponent: true,
+      currentTime: " ",
     };
   },
-  // day: "numeric",
-  // inject: ["users", "message"],
+
   computed: {
     currentDate() {
       const date = new Date();
-      const options = { month: "long", weekday: "long" };
+      const options = { month: "long", day: "numeric", weekday: "long" };
       return date.toLocaleDateString(undefined, options);
     },
+  },
+  created(){
+        this.currentStep = this.initialStep
   },
   mounted() {
     moment.tz.setDefault("Africa/Lagos");
     const nowInLagos = moment.tz("Africa/Lagos");
-    this.currentTime = nowInLagos.format("h:mm a");
+    this.currentTime = nowInLagos.format("h:mm A");
   },
   methods: {
     display(val) {
       this.currentStep = val;
+      this.$emit("goOpen");
     },
+  
+  
 
-    goBack() {
-      router.go(0); // Go back one page in the history
-    },
+  goBack() {
+    router.go(0);
   },
+  hide() {
+    this.hideComponent = false;
+    this.$emit("goBack");
+  },
+
+  
+}
+
 };
 </script>
 <style scoped>
@@ -205,7 +237,7 @@ h3 {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0px;
-
+  cursor: pointer;
   text-align: center;
   /* margin-right: 20px; */
   height: 40px;
@@ -215,17 +247,7 @@ h3 {
   align-items: center;
   width: 170px;
 }
-h3:hover {
-  background: #e8e8e8;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
 
-  /* width: 170px; */
-}
 .active {
   background-color: #e8e8e8;
 }
@@ -261,13 +283,14 @@ h3:hover {
   position: relative;
   border-radius: 24px;
   padding: 30px;
-  padding-right: 150px;
+  /* padding-right: 150px; */
 }
 .title {
   font-size: 16px;
   line-height: 24px;
   padding-bottom: 12px;
   font-weight: 700;
+  padding: 0.8rem;
 }
 .title span {
   font-size: 18px;
@@ -369,5 +392,20 @@ table {
   position: relative;
   top: 14px;
   left: 5px;
+}
+a {
+  text-decoration: none;
+  color: #000000;
+}
+.blue {
+  background-color: #e8e8e8;
+  color: #000000;
+}
+.transparent {
+  background-color: transparent;
+  color: #000000;
+}
+#other-button {
+  display: none;
 }
 </style>

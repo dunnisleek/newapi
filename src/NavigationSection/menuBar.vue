@@ -1,7 +1,7 @@
 <template>
   <div class="menu">
     <div>
-      <a href="/"> <img src="@/assets/acumenlogo.svg" /></a>
+      <a href="/"> <img src="@/assets/acumenlogo.svg"/></a>
     </div>
     <div>
       <button class="redBtn" @click="getUsers">Refresh Data</button>
@@ -12,7 +12,6 @@
 <script>
 import axios from "axios";
 export default {
-  
   data(){
     return{
         users:[]

@@ -1,5 +1,6 @@
 <template>
   <section>
+
   <div class="wrap">
   <div>
     <div class="subdetails">
@@ -255,6 +256,7 @@ tr{
  
 }
 table{
+  font-size:18px;
   margin-bottom: 0px;
   padding-bottom: 0px;
   height:10vh;

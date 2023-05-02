@@ -12,17 +12,17 @@
       </div>
 
       <div class="contentBox">
-        <div class="ventureBox" @click="showComponentB()">
+        <div class="ventureBox" @click="showComponentB(0)">
           <h2>Ventures</h2>
 
           <p>{{ ventureCount }}</p>
         </div>
 
-        <div class="digitalBox" @click="showComponentB()">
+        <div class="digitalBox" @click="showComponentB(1)">
           <h2>Digital</h2>
           <p>{{ digitalCount }}</p>
         </div>
-        <div class="communityBox"  @click="showComponentB()">
+        <div class="communityBox"  @click="showComponentB(2)">
           <h2>Community</h2>
           <p>{{ communityCount }}</p>
         </div>
@@ -30,6 +30,8 @@
       <div class="activeSection">
         <active-order
           v-if="componentToShow"
+          @go-back="componentToShow=false"
+          :initial-step="selectedStep"
           :users="users"
         ></active-order>
       
@@ -57,18 +59,21 @@ export default {
       communityCount: 20,
       currentTime: "",
       componentToShow: false,
-      
+      selectedStep:0
+   
 
   
     };
   },
   methods: {
-    showComponentB() {
-      this.componentToShow = "ActiveOrder";
-    }
+    showComponentB(step) {
+      this.selectedStep = step
+      this.componentToShow = "display(val)";
   
-  },
-
+ 
+    }
+},
+ 
   computed: {
     currentDate() {
       const date = new Date();
@@ -85,20 +90,7 @@ export default {
 </script>
 
 <style scoped>
-/* *{
-  box-sizing: border-box;
-  font-family: 'DM Sans', sans-serif;
-}
- .menu{
-    max-width: 100%;
-    display:flex;
-    justify-content: center;
-    gap:60rem;
-    align-items: center;
-    border-bottom: 1px solid #EAEAEA;
-    padding:20px 0px;
-   
- } */
+
 .redBtn {
   background: #fb242a;
   border-radius: 50px;
@@ -112,7 +104,7 @@ export default {
   max-width: 100%;
   display: flex;
   justify-content: center;
-  gap: 67.5rem;
+  gap: 69rem;
   align-items: center;
   margin: 0 auto;
  
@@ -193,7 +185,7 @@ export default {
   padding: 10px 25px;
 }
 .time {
-  font-size: 14px;
+  font-size: 12px;
   margin-left: 20px;
 }
 div .activeSection {
