@@ -28,9 +28,11 @@
       
          <tr v-for="(user, index) in users" :key="index" @click="openComponent(index)">
           
-            <td v-text="user.name.common" class="cell1" ></td>
-            <td class="cellTwo">{{user.name.official}}</td>
-            <td class="cell">{{user.capital}}</td>
+            <!-- <td v-text="user.name" class="cell1" ></td> -->
+            <td  class="cell1" >{{user.name}}</td>
+             <td class="cell">{{user.created_at}}</td>
+             <td class="cellTwo">{{user.email}}</td>
+             
          
         </tr>
        </tbody>
@@ -81,12 +83,12 @@ export default {
    methods:{
      
        getUsers(){
-        const URL = "https://restcountries.com/v3.1/all";
+        const URL = "https://dolphin-app-4xaig.ondigitalocean.app/v1/contact/";
         axios
         .get(URL)
         .then(res => {
-          // console.log(res.data)
-          this.users = (res.data).slice(0, 5)
+          console.log(res.data)
+          this.users = res.data.data.slice(0,5)
           console.log('this is recall')
         })
 
@@ -126,7 +128,7 @@ export default {
   border-radius:20px;
   top:4rem; 
   position: relative;
-  padding:80px 60px 0px 60px ;
+  padding:80px 60px 40px 60px ;
 
   max-width: 1200px;
   margin: 0 auto;

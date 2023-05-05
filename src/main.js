@@ -2,18 +2,41 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 import{createRouter,createWebHistory} from 'vue-router'
-import TableView from './components/TableView.vue';
+
+import LoginPage from './components/LoginPage.vue';
+import dashboard from './dashboard.vue';
 
 
 const router = createRouter({
                 history: createWebHistory(),
                 routes:[
-                       {path:'/' ,component:TableView}         
-                                               
+                       
+
+                       {
+                        name:'dashboard',
+                       path:'/dashboard',
+                        component:dashboard,
+                        meta:{
+                                needsAuth:true}} ,
+
+                        {    
+                                path:'/login', component:LoginPage
+                        }  , 
+                        {
+                                path:'/:notFound(.*)', redirect:'/login'
+                        }                    
                 ]
+});
+router.beforeEach((to, from, next)=>{
+        if(to.meta.needAuth){
+                next('/login');
+        }else{
+                next()
+        }
 })
 
 const app = createApp(App);
 app.use(router);
-app.mount("#app");
 
+app.mount("#app");
+export default router
