@@ -1,26 +1,21 @@
 <template>
   <div>
-    <menuBar />
-    <dashBoard></dashBoard>
-    <router-view/>
-    <!-- <TableView /> -->
+    <router-link to="/login"></router-link>
+    <router-view>
+    
+    </router-view>
+   
   </div>
 </template>
 
 <script>
-// import ActiveOrder from './components/ActiveOrder.vue';
-// import TableView from "./components/TableView.vue";
-import DashBoard from "./components/DashBoard.vue";
-import menuBar from "./NavigationSection/menuBar.vue";
 
-// import addPost from './components/addPost.vue';
+
 
 export default {
   name: "App",
   components: {
-    // TableView,
-    DashBoard,
-    menuBar,
+   
   },
   data() {
     return {};
@@ -31,7 +26,10 @@ export default {
 <style>
 #app {
   font-family: "DM Sans", sans-serif;
-
-  margin-bottom: 200px;
+  
+  /* margin-bottom: 200px; */
+}
+body{
+  margin:0px;
 }
 </style>
