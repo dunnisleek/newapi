@@ -5,7 +5,7 @@
 
     <div class="backbtn">
       <button class="redBtn" @click="hide">
-        <router-link to="/">Back</router-link>
+        <router-link to="/dashboard">Back</router-link>
       </button>
     </div>
     <div class="wrapper">
@@ -26,8 +26,8 @@
             <tbody>
               <!-- <h3>step1</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
-                <td>{{ userList.name.official }}</td>
-                <td>{{ userList.name.common }}</td>
+                <td>{{ userList.name }}</td>
+                <td>{{ userList.email }}</td>
               </tr>
             </tbody>
           </table>
@@ -38,8 +38,8 @@
             <tbody>
               <!-- <h3>step2</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
-                <td>{{ userList.name.official }}</td>
-                <td>{{ userList.name.common }}</td>
+                <td>{{ userList.name }}</td>
+                <td>{{ userList.email }}</td>
               </tr>
             </tbody>
           </table>
@@ -49,8 +49,8 @@
             <tbody>
               <!-- <h3>step3</h3> -->
               <tr v-for="(userList, index) in users" :key="index">
-                <td>{{ userList.name.official }}</td>
-                <td>{{ userList.name.common }}</td>
+                <td>{{ userList.name }}</td>
+                <td>{{ userList.email }}</td>
               </tr>
             </tbody>
           </table>
@@ -164,7 +164,7 @@ export default {
   
 
   goBack() {
-    router.go(0);
+    router.go(1);
   },
   hide() {
     this.hideComponent = false;
@@ -367,7 +367,7 @@ tbody tr:nth-of-type(odd):before {
 }
 td {
   width: 700px;
-  padding-right: 0px;
+  padding-right: 30px;
   /* padding-bottom: 50px; */
   /* height:10vh; */
 }

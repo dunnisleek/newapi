@@ -1,8 +1,8 @@
 <template>
   <div class="menu">
     <div>
-      <a href="/"> <img src="@/assets/acumenlogo.svg"/></a>
-    </div>
+      <button class="gobackbutton" @click=" goBack()"><img src="@/assets/acumenlogo.svg"/></button>
+     </div>
     <div>
       <button class="redBtn" @click="getUsers">Refresh Data</button>
     </div>
@@ -24,13 +24,16 @@ export default {
     // },
 
     getUsers() {
-      const URL = "https://restcountries.com/v3.1/all";
+      const URL = "https://dolphin-app-4xaig.ondigitalocean.app/v1/contact";
       axios.get(URL).then((res) => {
         // console.log(res.data)
         this.users = res.data;
         console.log("this is recall");
       });
     },
+    goBack() {
+    this.$router.go(0);
+  },
   },
 };
 </script>
@@ -55,6 +58,10 @@ export default {
   height: 44px;
   font-size: 18px;
   color: #fff;
+  border: none;
+}
+.gobackbutton{
+  background: transparent;
   border: none;
 }
 </style>
