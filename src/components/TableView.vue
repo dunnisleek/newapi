@@ -1,7 +1,8 @@
 <template>
   <section>
+    <dash-board :users="users" ></dash-board>
+   <div class="wrap" >
 
-  <div class="wrap">
   <div>
     <div class="subdetails">
        <div> <h3 class="recent">Most Recent Entries</h3></div>
@@ -26,30 +27,41 @@
        
        <tbody>
       
-         <tr v-for="(user, index) in users" :key="index" @click="openComponent(index)">
+         <tr v-for="(user, index) in [...users].slice(0,5)" :key="index" @click="openComponent(index)" :class="selectCircleClass(user)" >
           
             <!-- <td v-text="user.name" class="cell1" ></td> -->
-            <td  class="cell1" >{{user.name}}</td>
-             <td class="cell">{{user.created_at}}</td>
-             <td class="cellTwo">{{user.email}}</td>
+            <td   class="cell1" >{{user.name}}</td>
+            <!-- new Date('2022-03-08T17:21:44.771Z').toString().substring(0, 21) -->
+            <!-- (user.created_at) -->
+             <td  class="cell">{{new Date(user.created_at).toString().substring(0, 21)}}</td>
+             <td  class="cellTwo">{{user.email}}</td>
              
          
         </tr>
        </tbody>
+       
     </table>
+   
   <!-- </div> -->
  
 </div>
-</div>
-<div class="activeSection">
- 
-  <active-order v-if="isComponentOpen" :users="users"></active-order>
-  <dash-board :users="users"></dash-board>
 
 </div>
+
+
+ 
+
+
+
 
 </section>
-
+<div class="activeSection">
+ 
+ <active-order v-if="isComponentOpen" :users="users"></active-order>
+ 
+ <!-- this section allow us to click to each of the ventures -->
+ 
+</div>
 </template>
 
 
@@ -66,70 +78,85 @@ import axios from 'axios'
   //     }
   //     getCountries();
 export default {
+  name:'TableViewDunni',
+
   el:"#app",
   components:{ActiveOrder, DashBoard},
-  
+
     data(){
       return{
         message:'helo',
         users:[],
         isComponentOpen: false,
         activeIndex: null,
+        isComponentBOpen: true
+    
+       
+      
      
       }
      
     },
-
-   methods:{
      
+    
+   methods:{
+      selectCircleClass (user) {
+        // if (user.form_type === 'ventures') {
+        //   return 'green-circle'
+        // } else if (user.form_type === 'community') {
+        //   return 'blue-circle'
+        // } else {
+        //   return 'red-circle'
+        // }
+        switch(user.form_type) {
+          case 'ventures':
+            return 'green-circle'
+          case 'community': 
+            return 'blue-circle'
+          default:
+            return 'red-circle'
+        }
+      },
        getUsers(){
         const URL = "https://dolphin-app-4xaig.ondigitalocean.app/v1/contact/";
         axios
         .get(URL)
         .then(res => {
           console.log(res.data)
-          this.users = res.data.data.slice(0,5)
+          this.users = res.data.data
           console.log('this is recall')
         })
 
       },
       openComponent(index) {
       this.isComponentOpen = !this.isComponentOpen;
-     
+      
+      this.isComponentBOpen = false;
       this.activeIndex = index;
     },
     changeUserName() {
       this.message = 'Data has been refreshed!';
       this.$forceUpdate();
-    }
+    },
   
   },
- 
     mounted(){
-     
       this.getUsers();
-  
-  
+      
     },
-    
-  //   provide() {
-  //   return {
-  //     message: 'Hello from parent table',
-    
-  //   }
 
-  // }
 }
 </script>
 <style scoped>
 
+
 .wrap{
   border: 1px solid #C4C4C4;
   border-radius:20px;
-  top:4rem; 
+  top:5rem; 
   position: relative;
   padding:80px 60px 40px 60px ;
-
+  height: auto;
   max-width: 1200px;
   margin: 0 auto;
 
@@ -213,20 +240,35 @@ tr::before{
   height: 20px;
   /* max-height: 20px; */
   border-radius: 50%;
-  background-color:  #D3FFF4;
+  /* background-color:  #D3FFF4; */
   margin-right: 17px;
   position: relative;
- top:1.5rem;
+  margin-top:22px;
+ /* top:1.5rem; */
   text-align: center;
   /* top: 0.5rem; */
  
 }
-tbody tr:nth-of-type(even):before {
+/* THIS IS COLOR FOR BULLETPOINTS */
+/* tbody tr:nth-of-type(even):before {
   background-color: #FFDEDE;
+} */
+
+/* THIS IS COLOR FOR BULLETPOINTS */
+tr.red-circle::before {
+  background-color: #FFEEED;
 }
-tbody tr:nth-of-type(odd):before {
-  background-color: #D3FFF4;
+
+tr.green-circle::before {
+  background-color: #EBFFFA ;
 }
+
+tr.blue-circle::before {
+  background-color: #E9EEFF;
+}
+
+
+
 .cell{
   padding-left: 15rem;
  
@@ -244,8 +286,9 @@ div .activeSection{
   left:0;
   right:0;
   margin-top: 6rem;
- background: white;
+  background: white;
 }
+
 tr{
   cursor: pointer;
   /* margin-bottom: 30px; */

@@ -1,21 +1,36 @@
 <template>
   <section>
     <div class="form-wrapper">
-      <h2>welcome Back {{email}}</h2>
+      <h2>welcome Back {{}}</h2>
+      <div class="error-message" role="alert" v-if="error">{{ error }}</div>
       <form @submit.prevent="postData">
         <div>
-          <label class="label">Your Email </label>
-          <input type="text" id="text" placeholder="Email" v-model="email" />
-        </div>
-        <div>
-          <label class="label">Password</label>
+          <label for="email" class="label">Your Email </label>
           <input
-            type="password"
-            id="password"
+            type="text"
+            id="text"
+            placeholder="Email"
+            v-model="email"
+            required
+          />
+        </div>
+
+        <div>
+         
+          <label for="password" class="label">Password</label>
+          <!-- <input
+            type="{{ showPassword ? 'text' : 'password' }}"
             placeholder="password"
             v-model="password"
-          />{{ password }}
+            required
+          /> -->
+
+          <input v-if="showPassword" type="text" class="passwordinput"   placeholder="Password" v-model="password" />
+           <input v-else type="password"  placeholder="password" v-model="password">
+          <button @click="toggleShow()"  class="togglebtn">{{ showPassword ? 'Hide' : 'Show' }}</button>
         </div>
+
+      
         <input class="submitbtn" type="submit" value="sign in" />
       </form>
     </div>
@@ -26,28 +41,43 @@
 import axios from "axios";
 
 export default {
+  name:'LoginPage',
+  components: {},
   data() {
     return {
-      posts: {
-        email: "",
-        password: "",
-      },
+      email: "",
+      password: "",
+      error: "",
+      showPassword:false
     };
+  },
+  computed: {
+    buttonLabel() {
+      return (this.showPassword) ? "Hide" : "Show";
+    }
   },
   methods: {
     async postData() {
-      let result = await axios.post(
-        "https://dolphin-app-4xaig.ondigitalocean.app/v1/admin/login",
-        {
-          email: this.email,
-          password: this.password,
+      try {
+        let result = await axios.post(
+          "https://dolphin-app-4xaig.ondigitalocean.app/v1/admin/login",
+          {
+            email: this.email,
+            password: this.password,
+          }
+        );
+        if (result) {
+          this.$router.push({ name: "dashboard" });
         }
-      );
-      if (result) {
-        this.$router.push({ name: "dashboard" });
+        console.warn(result);
+      } catch (error) {
+        this.error = "invalid username/password";
       }
-      console.warn(result);
     },
+    toggleShow() {
+      this.showPassword = !this.showPassword;
+    }
+  
   },
 };
 </script>
@@ -62,14 +92,14 @@ section {
 div.form-wrapper {
   position: relative;
   top: 150px;
-  left:0;
-  right:0;
+  left: 0;
+  right: 0;
   color: #fff;
   margin: 0 auto;
   max-width: 300px;
   background: #2c0000;
   border-radius: 24px;
-
+  overflow: hidden;
   height: 50vh;
   padding: 02% 5% 5%;
   box-shadow: 0 5px 40px rgba(71, 107, 210, 0.19);
@@ -115,5 +145,24 @@ input {
 .submitbtn:hover {
   background-color: #f32d2dda;
   transition: all ease-in 0.3s;
+}
+.error-message {
+  font-size: 16px;
+  color: red;
+  font-weight: 400;
+}
+.passwordinput{
+  position: relative;
+  top:20px;
+}
+.togglebtn{
+    position: absolute;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    top: 284px;
+    left: 328px;
+    border:none;
+    cursor: pointer;
 }
 </style>

@@ -1,7 +1,5 @@
-<template>
+<template >
   <section v-if="hideComponent">
-    <!-- <div><menuBar /></div> -->
-    <!-- start of userlists -->
 
     <div class="backbtn">
       <button class="redBtn" @click="hide">
@@ -9,7 +7,7 @@
       </button>
     </div>
     <div class="wrapper">
-      <!-- <div class="tab"> -->
+     
       <div class="tab">
         <h3
           class="bluebg"
@@ -17,17 +15,25 @@
           @click="display(0)"
         >
           <span class="circlee"></span>
-          Ventures ({{ ventureCount }})
+          Ventures ({{ venturesItems.length }})
         </h3>
 
         <!-- inner Userlists pages -->
         <div class="userlist" v-if="currentStep === 0">
           <table>
             <tbody>
+              <!-- :class="{ active: userList === selectedItem }" -->
               <!-- <h3>step1</h3> -->
-              <tr v-for="(userList, index) in users" :key="index">
+              <tr
+                v-for="(userList, index) in [...venturesItems].slice(0,5)"  
+                :key="index"
+               
+                :class="[{ active: userList === selectedItem }, selectCircleClass(userList)]"
+                @click="showDetails(userList)"
+              >
                 <td>{{ userList.name }}</td>
                 <td>{{ userList.email }}</td>
+                <!-- <td>{{ userList.form_type }}</td> -->
               </tr>
             </tbody>
           </table>
@@ -37,9 +43,17 @@
           <table>
             <tbody>
               <!-- <h3>step2</h3> -->
-              <tr v-for="(userList, index) in users" :key="index">
+              <!-- :class="{ active: userList === selectedItem }" -->
+              <tr
+                v-for="(userList, index) in [...digitalItems].slice(0, 5)"
+                :key="index.form_type"
+               
+                :class="[{ active: userList === selectedItem }, selectCircleClass(userList)]"
+                @click="showDetails(userList)"
+              >
                 <td>{{ userList.name }}</td>
                 <td>{{ userList.email }}</td>
+                <!-- <td>{{ userList.form_type }}</td> -->
               </tr>
             </tbody>
           </table>
@@ -47,64 +61,83 @@
         <div class="userlistcommunity" v-else-if="currentStep === 2">
           <table>
             <tbody>
+              <!-- :class="{ active: userList === selectedItem }" -->
               <!-- <h3>step3</h3> -->
-              <tr v-for="(userList, index) in users" :key="index">
+              <tr v-for="userList in [...communityItems].slice(0,5)" :key="userList.index"
+              
+               :class="[{ active: userList === selectedItem }, selectCircleClass(userList)]"
+                @click="showDetails(userList)">
                 <td>{{ userList.name }}</td>
                 <td>{{ userList.email }}</td>
+                <!-- <td>{{ userList.form_type }}</td> -->
+                
               </tr>
             </tbody>
           </table>
         </div>
- 
-        <h3
-        :class="currentStep === 1 ? 'blue' : 'transparent' "
-          @click="display(1)"
-    
-        >
-          <span class="pinkcircle"></span>Digital ({{ digitalCount }})
-        </h3>
 
         <h3
-          :class="currentStep === 2 ? 'blue' : 'transparent'"
-          @click="display(2)"
+          :class="currentStep === 1 ? 'blue' : 'transparent'"
+          @click="display(1)"
+          
         >
-          <span class="purplecircle"></span>Community ({{ communityCount }})
+          <span class="pinkcircle" ></span
+          >Digital ({{ digitalItems.length}})
         </h3>
+
+        <h3 :class="currentStep === 2 ? 'blue' : 'transparent'"
+          @click="display(2)">
+          <span class="purplecircle" ></span>Community 
+          ({{ communityItems.length }})
+        </h3>
+        
       </div>
 
-      <!-- start of form -->
+      <!-- START OF FORM -->
       <div class="innerdetail">
         <!-- <div > -->
 
-        <div class="Fcircle">
-          <h2><span class="circle"> Favour</span></h2>
+        <div class="Fcircle" v-if="selectedItem">
+          <h2>
+            <span class="circle" >{{ selectedItem.name }}</span>
+          </h2>
 
-          <p>{{ currentDate }} ({{ currentTime }})</p>
+          <!-- <p>{{ currentDate }} ({{ currentTime }})</p> -->
+          <p>{{new Date(selectedItem.created_at).toString().substring(0, 21)}}</p>
         </div>
-        <!-- details -->
+        <!-- details for the form-->
 
-        <p class="title">Name <br /><span>Favour</span></p>
-        <p class="title">
-          Email <br />
-          <span style="text-decoration: underline"> favour@acumen.digital</span>
-        </p>
-        <p class="title">
-          Message<br />
-          <span class="para">
-            Hello my dear,How are you? Abeg I want to to do mobile app
-            Thanks.</span
-          >
-        </p>
+        <div v-if="selectedItem">
+          <p class="title">
+            Name <br /><span>{{ selectedItem.name }}</span>
+          </p>
+          <p class="title">
+            Email <br />
+            <span style="text-decoration: underline">
+              {{ selectedItem.email }}</span
+            >
+          </p>
+          <p class="title">
+            Company<br />
+            <span class="para">{{ selectedItem.company }}</span>
+          </p>
+          <p class="title">
+            Message<br />
+            <span class="para">{{ selectedItem.message }} </span>
+          </p>
+        </div>
       </div>
     </div>
+   
   </section>
+
+
+
 </template>
 
 <script>
 
-// import menuBar from "@/NavigationSection/menuBar.vue";
 import moment from "moment-timezone";
-
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -114,6 +147,7 @@ const router = createRouter({
 
 export default {
   name: "ActiveOrder",
+ 
   props: {
     users: {
       type: Array,
@@ -123,32 +157,41 @@ export default {
       type: Boolean,
       default: false,
     },
-    initialStep:{
-      type:Number,
-      default:0
+    initialStep: {
+      type: Number,
+      default: 0,
     }
+    
   },
 
   data() {
     return {
-      ventureCount: 20,
-      digitalCount: 95,
-      communityCount: 107,
       currentStep: 0,
       hideComponent: true,
       currentTime: " ",
+      selectedItem: null,
     };
   },
-
   computed: {
     currentDate() {
       const date = new Date();
       const options = { month: "long", day: "numeric", weekday: "long" };
       return date.toLocaleDateString(undefined, options);
     },
+    venturesItems() {
+      return this.users.filter((users) => users.form_type === "ventures");
+    },
+    digitalItems() {
+      return this.users.filter((users) => users.form_type === "digital" || users.form_type === '')
+    },
+    communityItems() {
+      return this.users.filter((users) => users.form_type === "community");
+    }
   },
-  created(){
-        this.currentStep = this.initialStep
+  
+  created() {
+    this.currentStep = this.initialStep;
+    
   },
   mounted() {
     moment.tz.setDefault("Africa/Lagos");
@@ -160,29 +203,39 @@ export default {
       this.currentStep = val;
       this.$emit("goOpen");
     },
-  
-  
+    goBack() {
+      router.go(1);
+    },
+    hide() {
+      this.hideComponent = false;
+      this.$emit("goBack");
+    },
 
-  goBack() {
-    router.go(1);
+    showDetails(userList) {
+      this.selectedItem = userList;
+    },
+    selectCircleClass (userList) {
+        // if (user.form_type === 'ventures') {
+        //   return 'green-circle'
+        // } else if (user.form_type === 'community') {
+        //   return 'blue-circle'
+        // } else {
+        //   return 'red-circle'
+        // }
+        switch(userList.form_type) {
+          case 'ventures':
+            return 'green-circle'
+          case 'community': 
+            return 'blue-circle'
+          default:
+            return 'red-circle'
+        }
+      }
   },
-  hide() {
-    this.hideComponent = false;
-    this.$emit("goBack");
-  },
-
-  
-}
-
 };
 </script>
 <style scoped>
-section {
-  position: relative;
-  height: 150vh;
-  top: 0;
-  bottom: 0;
-}
+
 
 .circle::before {
   content: "";
@@ -250,6 +303,9 @@ h3 {
 
 .active {
   background-color: #e8e8e8;
+  border-radius:24px;
+  /* padding-left:60px; */
+  
 }
 .wrapper {
   padding: 40px;
@@ -261,6 +317,8 @@ h3 {
   align-content: center;
   margin: 0 auto;
   width: 1331px;
+  
+
 }
 .backbtn {
   width: 1331px;
@@ -274,7 +332,7 @@ h3 {
   border-radius: 24px;
   padding: 30px;
   width: 50%;
-  height: 70vh;
+  height: 80vh;
   /* height: 45vh; */
 }
 .innerdetail {
@@ -284,6 +342,7 @@ h3 {
   border-radius: 24px;
   padding: 30px;
   /* padding-right: 150px; */
+ 
 }
 .title {
   font-size: 16px;
@@ -327,6 +386,7 @@ h3 {
   top: 100px;
   left: 60px;
   right: 20px;
+
   /* left:140px; */
   /* bottom: 100px; */
   /* max-width: 70%; */
@@ -336,6 +396,7 @@ h3 {
   top: 100px;
   left: 60px;
   right: 20px;
+
   /* bottom: 100px; */
   /* max-width: 70%; */
 }
@@ -344,6 +405,7 @@ h3 {
   top: 100px;
   left: 60px;
   right: 20px;
+ 
   bottom: 100px;
 }
 
@@ -359,15 +421,28 @@ tr::before {
   position: relative;
   top: 1.3rem;
 }
-tbody tr:nth-of-type(even):before {
+/* tbody tr:nth-of-type(even):before {
   background-color: #ffdede;
 }
 tbody tr:nth-of-type(odd):before {
   background-color: #d3fff4;
+} */
+
+tr.red-circle::before {
+  background-color: #FFEEED;
+}
+
+tr.green-circle::before {
+  background-color: #EBFFFA ;
+}
+
+tr.blue-circle::before {
+  background-color: #E9EEFF;
 }
 td {
-  width: 700px;
-  padding-right: 30px;
+  /* width: 700px; */
+  padding-right: 40px;
+  
   /* padding-bottom: 50px; */
   /* height:10vh; */
 }
@@ -375,6 +450,10 @@ tr {
   cursor: pointer;
   background: #fdfdfd;
   height: 8vh;
+}
+tr::before{
+  margin-right: 28px;
+    margin-left: 20px;
 }
 table {
   border-collapse: initial;
@@ -408,4 +487,5 @@ a {
 #other-button {
   display: none;
 }
+
 </style>

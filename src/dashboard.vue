@@ -1,7 +1,7 @@
 <template>
        <div>
          <menuBar />
-         <dashBoard></dashBoard>
+         
          <TableView />
          
        </div>
@@ -10,7 +10,7 @@
      <script>
    
      import TableView from "./components/TableView.vue";
-     import DashBoard from "./components/DashBoard.vue";
+     
      import menuBar from "./NavigationSection/menuBar.vue";
  
      
@@ -18,7 +18,6 @@
        name: "App",
        components: {
          TableView,
-         DashBoard,
          menuBar
        },
        data() {
@@ -28,7 +27,7 @@
      </script>
      <style scoped>
      div{
-      padding-bottom: 130px;
+      padding-bottom: 6rem;
      }
      </style>
      

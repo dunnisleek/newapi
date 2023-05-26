@@ -1,6 +1,7 @@
 <template>
   <section>
     <div>
+   
       <div class="userdetails" >
         <div><h3>Hello Ayo</h3></div>
         <div>
@@ -11,20 +12,21 @@
         </div>
       </div>
 
-      <div class="contentBox">
+      <div class="contentBox" >
         <div class="ventureBox" @click="showComponentB(0)">
           <h2>Ventures</h2>
 
-          <p>{{ ventureCount }}</p>
+          <p>{{ ventureCount.length }}</p>
         </div>
 
         <div class="digitalBox" @click="showComponentB(1)">
           <h2>Digital</h2>
-          <p>{{ digitalCount }}</p>
+          <p>{{digitalCount}} </p>
         </div>
+  
         <div class="communityBox"  @click="showComponentB(2)">
           <h2>Community</h2>
-          <p>{{ communityCount }}</p>
+          <p>{{ communityCount.length}} </p>
         </div>
       </div>
       <div class="activeSection">
@@ -41,30 +43,33 @@
 </template>
 
 <script>
+
 import ActiveOrder from "./ActiveOrder.vue";
 import moment from "moment-timezone";
 export default {
+  name:'DashBoard',
+  inject:['digitCount'],
   components: { ActiveOrder },
   props: {
     users: {
       type: Array,
       required: true,
-    }
+    },
+    
+   
   },
  
   data() {
     return {
-      ventureCount: 87,
-      digitalCount: 87,
-      communityCount: 20,
+     
       currentTime: "",
       componentToShow: false,
-      selectedStep:0
-   
-
+      selectedStep:0,
+     
   
     };
   },
+  
   methods: {
     showComponentB(step) {
       this.selectedStep = step
@@ -80,6 +85,19 @@ export default {
       const options = { month: "long", day: "numeric", weekday: "long" };
       return date.toLocaleDateString(undefined, options);
     },
+    
+    ventureCount(){
+       return this.users.filter((users) => users.form_type === "ventures")
+    },
+    digitalCount(){
+      
+       return this.users.filter((users) => users.form_type === "" ).length + this.users.filter((users) => users.form_type === "digital").length
+      
+    },
+    communityCount(){
+      return this.users.filter((users) => users.form_type === "community")
+    }
+   
   },
   mounted() {
     moment.tz.setDefault("Africa/Lagos");
@@ -90,7 +108,11 @@ export default {
 </script>
 
 <style scoped>
-
+.mes{
+  background: red;
+  width:50px;
+  height:50px;
+}
 .redBtn {
   background: #fb242a;
   border-radius: 50px;
@@ -189,12 +211,14 @@ export default {
   margin-left: 20px;
 }
 div .activeSection {
-  position: relative;
-  top: -300px;
+  position: absolute;
+  /* top: -300px; */
   left: 0;
   right: 0;
-  margin-top: 3rem;
+  top:90px;
+  /* margin-top: 3rem; */
   background: #ffffff;
   z-index: 8;
+ 
 }
 </style>
