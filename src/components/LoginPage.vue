@@ -152,8 +152,7 @@ input {
   font-weight: 400;
 }
 .passwordinput{
-  position: relative;
-  top:20px;
+  
 }
 .togglebtn{
     position: absolute;
